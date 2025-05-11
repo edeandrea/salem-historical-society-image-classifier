@@ -6,11 +6,11 @@ import io.salemhist.service.FileReader;
 import picocli.CommandLine.Command;
 
 @Command(name = "describeImage")
-public class GreetingCommand implements Runnable {
+public class MainEntrypoint implements Runnable {
   private final ImageDescriber imageDescriber;
   private final FileReader fileReader;
 
-  public GreetingCommand(ImageDescriber imageDescriber, FileReader fileReader) {
+  public MainEntrypoint(ImageDescriber imageDescriber, FileReader fileReader) {
     this.imageDescriber = imageDescriber;
     this.fileReader = fileReader;
   }

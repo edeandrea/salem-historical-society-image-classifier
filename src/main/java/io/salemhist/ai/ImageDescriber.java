@@ -7,6 +7,8 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.ImageUrl;
 import io.quarkiverse.langchain4j.RegisterAiService;
+import io.quarkiverse.langchain4j.guardrails.OutputGuardrails;
+import io.salemhist.ai.guardrail.ImageDescriptionOutputJsonGuardrail;
 import io.salemhist.domain.ImageDescription;
 
 @RegisterAiService
@@ -33,5 +35,6 @@ public interface ImageDescriber {
 //      Please only generate the response as a Microsoft Word document (.docx) format. The document should contain the original image and the response you've generated.
 //      """)
   @UserMessage("This image is some kind of {category}.")
+  @OutputGuardrails(ImageDescriptionOutputJsonGuardrail.class)
   ImageDescription describeImage(@ImageUrl Image image, String category);
 }
