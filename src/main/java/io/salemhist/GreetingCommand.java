@@ -1,19 +1,27 @@
 package io.salemhist;
 
-import picocli.CommandLine;
+import dev.langchain4j.data.image.Image;
+import io.salemhist.ai.ImageDescriber;
+import io.salemhist.service.FileReader;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Parameters;
 
-@Command(name = "greeting", mixinStandardHelpOptions = true)
+@Command(name = "describeImage")
 public class GreetingCommand implements Runnable {
+  private final ImageDescriber imageDescriber;
+  private final FileReader fileReader;
 
-  @Parameters(paramLabel = "<name>", defaultValue = "picocli",
-              description = "Your name.")
-  String name;
+  public GreetingCommand(ImageDescriber imageDescriber, FileReader fileReader) {
+    this.imageDescriber = imageDescriber;
+    this.fileReader = fileReader;
+  }
 
   @Override
   public void run() {
-    System.out.printf("Hello %s, go go commando!\n", name);
-  }
+    var image = Image.builder()
+        .base64Data(this.fileReader.getBase64EncodedFile("image.png"))
+        .mimeType("image/png")
+        .build();
 
+    System.out.println(this.imageDescriber.describeImage(image, "tool"));
+  }
 }
