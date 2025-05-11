@@ -19,7 +19,7 @@ public class GreetingCommand implements Runnable {
   public void run() {
     var image = Image.builder()
         .base64Data(this.fileReader.getBase64EncodedFile("image.png"))
-        .mimeType("image/png")
+        .mimeType(this.fileReader.getMimeType("image.png"))
         .build();
 
     System.out.println(this.imageDescriber.describeImage(image, "tool"));
