@@ -6,17 +6,19 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.transaction.Transactional;
 
 import org.salemhist.domain.Artifact;
-import org.salemhist.domain.ArtifactDescription;
 import org.salemhist.domain.Category;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Sort;
 
+import dev.langchain4j.agent.tool.Tool;
+
 @ApplicationScoped
 public class ArtifactRepository implements PanacheRepository<Artifact> {
   @Transactional
-  public void saveArtifact(ArtifactDescription artifactDescription, Category category) {
-    persist(artifactDescription.asArtifact(category));
+  @Tool("Saves an artifact for a given category")
+  public void saveArtifact(Artifact artifact) {
+    persist(artifact);
   }
 
   public List<Artifact> getAllSortedByCategory() {

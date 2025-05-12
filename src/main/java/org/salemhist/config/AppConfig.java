@@ -12,4 +12,7 @@ public interface AppConfig {
 
   @WithDefault("target/docs")
   Path outputDir();
+
+  @WithDefault("true")
+  boolean cleanOutputDirAtStartup();
 }
