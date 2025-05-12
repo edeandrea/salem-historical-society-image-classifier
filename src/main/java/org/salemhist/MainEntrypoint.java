@@ -1,22 +1,22 @@
 package org.salemhist;
 
 import java.io.IOException;
-import java.nio.file.Path;
 
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Event;
-import jakarta.transaction.Transactional;
 
 import org.salemhist.ai.ImageDescriber;
+import org.salemhist.domain.Artifact;
+import org.salemhist.domain.ArtifactToDescribe;
 import org.salemhist.domain.ErrorEvent;
 import org.salemhist.repository.ArtifactRepository;
 import org.salemhist.service.FileReader;
 
+import io.quarkus.logging.Log;
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 
 @QuarkusMain
-@ActivateRequestContext
 public class MainEntrypoint implements QuarkusApplication {
   private final ImageDescriber imageDescriber;
   private final FileReader fileReader;
@@ -31,24 +31,46 @@ public class MainEntrypoint implements QuarkusApplication {
   }
 
   @Override
-  @Transactional
+  @ActivateRequestContext
   public int run(String... args) {
+    loadImageFiles();
+    printArtifacts();
+
+    return 0;
+  }
+
+  private void printArtifacts() {
+    if (Log.isDebugEnabled()) {
+      System.out.println("======== IMAGES TO PROCESS ==========");
+      this.artifactRepository.listAll().forEach(this::printArtifact);
+    }
+  }
+
+  private void printArtifact(Artifact artifact) {
+    System.out.println("-----------------------------------");
+    System.out.println("IMAGE DESCRIPTION:     %s".formatted(artifact.getImageDescription()));
+    System.out.println("REFERENCE DESCRIPTION: %s".formatted(artifact.getReferenceDescription()));
+    System.out.println("REFERENCE URL:         %s".formatted(artifact.getReferenceUrl()));
+    System.out.println("CATEGORY NAME:         %s".formatted(artifact.getCategoryName()));
+    System.out.println("CATEGORY DESCRIPTION:  %s".formatted(artifact.getCategoryDescription()));
+    System.out.println("-----------------------------------");
+  }
+
+  private void loadImageFiles() {
     try {
-      this.fileReader.getAllImagesInAllSubdirectories()
+      this.fileReader.getAllImagesInSubdirectories()
           .forEach(this::processImageFile);
     }
     catch (IOException e) {
       throw new RuntimeException(e);
     }
-
-    return 0;
   }
 
-  private void processImageFile(Path file) {
-    this.fileReader.getImage(file)
-        .map(image -> this.imageDescriber.describeImage(image, "tool").asArtifact())
+  private void processImageFile(ArtifactToDescribe artifactToDescribe) {
+    this.fileReader.getImage(artifactToDescribe.imageFile())
+        .map(image -> artifactToDescribe.hasCategoryDescription() ? this.imageDescriber.describeImage(image, artifactToDescribe.category()) : this.imageDescriber.describeImage(image, artifactToDescribe.category().name()))
         .ifPresentOrElse(
-            this.artifactRepository::persist,
+            artifactDescription -> this.artifactRepository.saveArtifact(artifactDescription, artifactToDescribe.category()),
             () -> System.out.println("Couldn't find image file")
         );
   }

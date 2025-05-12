@@ -4,19 +4,27 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Base64;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Event;
 
 import org.salemhist.config.AppConfig;
+import org.salemhist.domain.ArtifactToDescribe;
+import org.salemhist.domain.Category;
 import org.salemhist.domain.ErrorEvent;
+
+import io.quarkus.logging.Log;
 
 import dev.langchain4j.data.image.Image;
 
 @ApplicationScoped
 public class FileReader {
+  private static final String CATEGORY_DESCRIPTION_FILENAME = "description.txt";
   private final AppConfig appConfig;
   private final Event<ErrorEvent> errorEventPublisher;
 
@@ -25,9 +33,24 @@ public class FileReader {
     this.errorEventPublisher = errorEventPublisher;
   }
 
-  public Stream<Path> getAllImagesInAllSubdirectories() throws IOException {
-    return Files.walk(this.appConfig.rootImageDir())
-        .filter(this::isImageFile);
+  public Stream<ArtifactToDescribe> getAllImagesInSubdirectories() throws IOException {
+    var categoryDescriptions = getCategoryDescriptions();
+
+    return Files.list(this.appConfig.rootImageDir())
+        .filter(Files::isDirectory)
+        .flatMap(categoryDir -> {
+          var categoryName = categoryDir.getFileName().toString();
+
+          try {
+            return Files.list(categoryDir)
+                .filter(file -> !CATEGORY_DESCRIPTION_FILENAME.equals(file.getFileName().toString()) && !Files.isDirectory(file) && isImageFile(file))
+                .map(imageFile -> new ArtifactToDescribe(imageFile, categoryDescriptions.getOrDefault(categoryName, new Category(categoryName))));
+          }
+          catch (IOException e) {
+            this.errorEventPublisher.fire(new ErrorEvent("Error reading category directory %s".formatted(categoryDir), e));
+            return Stream.empty();
+          }
+        });
   }
 
   public Optional<Image> getImage(Path file) {
@@ -73,5 +96,33 @@ public class FileReader {
     }
 
     return false;
+  }
+
+  private Map<String, Category> getCategoryDescriptions() throws IOException {
+    return Files.list(this.appConfig.rootImageDir())
+        .filter(Files::isDirectory)
+        .flatMap(dir -> {
+              try {
+                var categoryName = dir.getFileName().toString();
+                Log.infof("Processing category \"%s\" from directory %s", categoryName, dir);
+
+                return Files.list(dir)
+                    .filter(file -> CATEGORY_DESCRIPTION_FILENAME.equals(file.getFileName().toString()) && !Files.isDirectory(file))
+                    .map(file -> {
+                      try {
+                        return new Category(categoryName, Files.readString(file));
+                      }
+                      catch (IOException e) {
+                        this.errorEventPublisher.fire(new ErrorEvent("Error reading category file %s".formatted(file), e));
+                        return new Category(categoryName);
+                      }
+                    });
+              }
+              catch (IOException e) {
+                this.errorEventPublisher.fire(new ErrorEvent("Error reading category directory %s".formatted(dir), e));
+                return null;
+              }
+            })
+        .collect(Collectors.toMap(Category::name, Function.identity()));
   }
 }

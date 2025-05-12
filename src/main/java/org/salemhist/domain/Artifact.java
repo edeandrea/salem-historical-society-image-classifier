@@ -18,23 +18,12 @@ public class Artifact {
     @SequenceGenerator(name = "artifacts_seq", sequenceName = "artifacts_seq", allocationSize = 1)
     private Long id;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String imageDescription;
-
-    @Column
     private String referenceDescription;
-
-    @Column
-    private String referenceURL;
-
-    public static Artifact from(ArtifactDescription artifactDescription) {
-        var artifact = new Artifact();
-        artifact.setImageDescription(artifactDescription.imageDescription());
-        artifact.setReferenceDescription(artifactDescription.referenceDescription());
-        artifact.setReferenceURL(artifactDescription.referenceURL().toString());
-
-        return artifact;
-    }
+    private String referenceUrl;
+    private String categoryName;
+    private String categoryDescription;
 
     public Long getId() {
         return id;
@@ -60,12 +49,12 @@ public class Artifact {
         this.referenceDescription = referenceDescription;
     }
 
-    public String getReferenceURL() {
-        return referenceURL;
+    public String getReferenceUrl() {
+        return referenceUrl;
     }
 
-    public void setReferenceURL(String referenceURL) {
-        this.referenceURL = referenceURL;
+    public void setReferenceUrl(String referenceUrl) {
+        this.referenceUrl = referenceUrl;
     }
 
     @Override
@@ -88,7 +77,25 @@ public class Artifact {
                "id=" + id +
                ", imageDescription='" + imageDescription + '\'' +
                ", referenceDescription='" + referenceDescription + '\'' +
-               ", referenceURL='" + referenceURL + '\'' +
+               ", referenceUrl='" + referenceUrl + '\'' +
+               ", categoryName='" + referenceUrl + '\'' +
+               ", categoryDescription='" + referenceUrl + '\'' +
                '}';
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryDescription() {
+        return categoryDescription;
+    }
+
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
     }
 }

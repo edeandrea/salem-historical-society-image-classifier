@@ -1,15 +1,20 @@
 package org.salemhist.ai;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 import org.salemhist.domain.ArtifactDescription;
+import org.salemhist.domain.Category;
 
 import dev.langchain4j.data.image.Image;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import io.quarkiverse.langchain4j.ImageUrl;
 import io.quarkiverse.langchain4j.RegisterAiService;
+import io.quarkiverse.langchain4j.RegisterAiService.NoChatMemoryProviderSupplier;
 import io.quarkiverse.langchain4j.guardrails.OutputGuardrails;
 
-@RegisterAiService
+@RegisterAiService(chatMemoryProviderSupplier = NoChatMemoryProviderSupplier.class)
+@ApplicationScoped
 @OutputGuardrails(ImageDescriptionOutputJsonGuardrail.class)
 @SystemMessage("""
       You are a service which helps identify historical objects from a picture. You should provide a 2-3 sentence description of the image sent to you. The description should be simple enough for an 11 year old child to understand.
@@ -32,9 +37,9 @@ public interface ImageDescriber {
 //
 //      Please only generate the response as a Microsoft Word document (.docx) format. The document should contain the original image and the response you've generated.
 //      """)
-  @UserMessage("This image is of the category {category}, which is described as \"{categoryDescription}\".")
-  ArtifactDescription describeImage(@ImageUrl Image image, String category, String categoryDescription);
+  @UserMessage("This image is categorized as \"{category.name}\", which is described as \"{category.description}\".")
+  ArtifactDescription describeImage(@ImageUrl Image image, Category category);
 
-  @UserMessage("This image is of the category {category}.")
+  @UserMessage("This image is categorized as \"{category}\"")
   ArtifactDescription describeImage(@ImageUrl Image image, String category);
 }

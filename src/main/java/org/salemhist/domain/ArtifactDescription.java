@@ -12,7 +12,14 @@ public record ArtifactDescription(@Description("Description of the image") Strin
     this(imageDescription, referenceDescription, null);
   }
 
-  public Artifact asArtifact() {
-    return Artifact.from(this);
+  public Artifact asArtifact(Category category) {
+    var artifact = new Artifact();
+    artifact.setImageDescription(this.imageDescription());
+    artifact.setReferenceDescription(this.referenceDescription());
+    artifact.setReferenceUrl(this.referenceURL().toString());
+    artifact.setCategoryName(category.name());
+    artifact.setCategoryDescription(category.description());
+
+    return artifact;
   }
 }

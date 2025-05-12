@@ -1,7 +1,5 @@
 quarkus:
   langchain4j:
-    log-responses: true
-    log-requests: true
     timeout: 1m
     openai:
       api-key: "${OPENAI_KEY}"
@@ -14,11 +12,13 @@ quarkus:
 
 "%dev":
   quarkus:
-#    langchain4j:
-#      openai:
-#        base-url: http://localhost:11434/v1
-#        chat-model:
-#          model-name: llama3.2-vision:11b
+    langchain4j:
+      log-requests: true
+      log-responses: true
+      openai:
+        base-url: http://localhost:11434/v1
+        chat-model:
+          model-name: llama3.2-vision:11b
     hibernate-orm:
       log:
         sql: true
