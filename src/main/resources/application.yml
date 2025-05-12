@@ -1,0 +1,24 @@
+quarkus:
+  langchain4j:
+    log-responses: true
+    log-requests: true
+    timeout: 1m
+    openai:
+      api-key: "${OPENAI_KEY}"
+      chat-model:
+        model-name: gpt-4.1
+  hibernate-orm:
+    database:
+      generation: drop-and-create
+    physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
+
+"%dev":
+  quarkus:
+#    langchain4j:
+#      openai:
+#        base-url: http://localhost:11434/v1
+#        chat-model:
+#          model-name: llama3.2-vision:11b
+    hibernate-orm:
+      log:
+        sql: true

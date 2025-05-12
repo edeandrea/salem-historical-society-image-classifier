@@ -1,14 +1,15 @@
-package io.salemhist.ai.guardrail;
+package org.salemhist.ai;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import org.salemhist.domain.Artifact;
+
 import io.quarkiverse.langchain4j.guardrails.AbstractJsonExtractorOutputGuardrail;
-import io.salemhist.domain.ImageDescription;
 
 @ApplicationScoped
 public class ImageDescriptionOutputJsonGuardrail extends AbstractJsonExtractorOutputGuardrail {
   @Override
   protected Class<?> getOutputClass() {
-    return ImageDescription.class;
+    return Artifact.class;
   }
 }
