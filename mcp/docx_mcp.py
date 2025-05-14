@@ -7,20 +7,19 @@ Provides various operations for docx documents, including querying, adding, modi
 Implemented using the official MCP library
 """
 
+import logging
 import os
 import tempfile
-import logging
 import traceback
 from contextlib import asynccontextmanager
-from typing import AsyncIterator, Dict, Any, Optional
-
-from mcp.server.fastmcp import FastMCP, Context
 from docx import Document
-from docx.shared import Pt, RGBColor, Inches, Cm
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING, WD_BREAK
 from docx.enum.style import WD_STYLE_TYPE
-from docx.oxml.ns import qn
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT, WD_LINE_SPACING, WD_BREAK
 from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
+from docx.shared import Pt, RGBColor, Inches, Cm
+from mcp.server.fastmcp import FastMCP, Context
+from typing import AsyncIterator, Dict, Any, Optional
 
 # Configure logging
 logging.basicConfig(
@@ -125,8 +124,8 @@ processor = DocxProcessor()
 async def server_lifespan(server: FastMCP) -> AsyncIterator[Dict[str, Any]]:
     """Manage server lifecycle"""
     try:
-        # Start server with clean state
-        logger.info("DocxProcessor MCP server starting with clean state...")
+        # Start server with remove state
+        logger.info("DocxProcessor MCP server starting with remove state...")
         # Do not attempt to load any previous state
         yield {"processor": processor}
     finally:
@@ -1269,11 +1268,11 @@ def edit_section_by_keyword(ctx: Context, keyword: str, new_content: list, secti
 # Add more tools...
 
 if __name__ == "__main__":
-    # Always start with a clean state, don't try to load any previous document
+    # Always start with a remove state, don't try to load any previous document
     if os.path.exists(CURRENT_DOC_FILE):
         try:
             os.remove(CURRENT_DOC_FILE)
-            logger.info("Removed existing state file for clean startup")
+            logger.info("Removed existing state file for remove startup")
         except Exception as e:
             logger.error(f"Failed to remove existing state file: {e}")
 

@@ -25,6 +25,8 @@ import dev.langchain4j.data.image.Image;
 @ApplicationScoped
 public class FileReader {
   private static final String CATEGORY_DESCRIPTION_FILENAME = "description.txt";
+  public static final String OUTPUT_FILE_NAME_TEMPLATE = "%s.docx";
+
   private final AppConfig appConfig;
   private final Event<ErrorEvent> errorEventPublisher;
 
@@ -35,6 +37,8 @@ public class FileReader {
 
   public Stream<ArtifactToDescribe> getAllImagesInSubdirectories() throws IOException {
     var categoryDescriptions = getCategoryDescriptions();
+
+    Log.debugf("Found categories: %s", categoryDescriptions);
 
     return Files.list(this.appConfig.rootImageDir())
         .filter(Files::isDirectory)

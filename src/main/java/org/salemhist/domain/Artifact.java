@@ -24,6 +24,8 @@ public class Artifact {
     private String referenceUrl;
     private String categoryName;
     private String categoryDescription;
+    private String inputFile;
+    private String outputFile;
 
     public Long getId() {
         return id;
@@ -57,6 +59,38 @@ public class Artifact {
         this.referenceUrl = referenceUrl;
     }
 
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryDescription() {
+        return categoryDescription;
+    }
+
+    public void setCategoryDescription(String categoryDescription) {
+        this.categoryDescription = categoryDescription;
+    }
+
+    public String getInputFile() {
+        return inputFile;
+    }
+
+    public void setInputFile(String inputFile) {
+        this.inputFile = inputFile;
+    }
+
+    public String getOutputFile() {
+        return outputFile;
+    }
+
+    public void setOutputFile(String outputFile) {
+        this.outputFile = outputFile;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -80,22 +114,8 @@ public class Artifact {
                ", referenceUrl='" + referenceUrl + '\'' +
                ", categoryName='" + referenceUrl + '\'' +
                ", categoryDescription='" + referenceUrl + '\'' +
+               ", inputFile='" + inputFile + '\'' +
+               ", outputFile='" + outputFile + '\'' +
                '}';
-    }
-
-    public String getCategoryName() {
-        return categoryName;
-    }
-
-    public void setCategoryName(String categoryName) {
-        this.categoryName = categoryName;
-    }
-
-    public String getCategoryDescription() {
-        return categoryDescription;
-    }
-
-    public void setCategoryDescription(String categoryDescription) {
-        this.categoryDescription = categoryDescription;
     }
 }

@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
+import java.util.UUID;
 
 import jakarta.enterprise.context.control.ActivateRequestContext;
 import jakarta.enterprise.event.Event;
 
 import org.salemhist.ai.ImageDescriber;
+import org.salemhist.ai.PerFileChatMemoryProvider;
 import org.salemhist.config.AppConfig;
 import org.salemhist.domain.Artifact;
 import org.salemhist.domain.ArtifactToDescribe;
@@ -28,13 +30,15 @@ public class MainEntrypoint implements QuarkusApplication {
   private final ArtifactRepository artifactRepository;
   private final Event<ErrorEvent> errorEventPublisher;
   private final AppConfig appConfig;
+  private final PerFileChatMemoryProvider chatMemoryProvider;
 
-  public MainEntrypoint(ImageDescriber imageDescriber, FileReader fileReader, ArtifactRepository artifactRepository, Event<ErrorEvent> errorEventPublisher, AppConfig appConfig) {
+  public MainEntrypoint(ImageDescriber imageDescriber, FileReader fileReader, ArtifactRepository artifactRepository, Event<ErrorEvent> errorEventPublisher, AppConfig appConfig, PerFileChatMemoryProvider chatMemoryProvider) {
     this.imageDescriber = imageDescriber;
     this.fileReader = fileReader;
     this.artifactRepository = artifactRepository;
     this.errorEventPublisher = errorEventPublisher;
     this.appConfig = appConfig;
+    this.chatMemoryProvider = chatMemoryProvider;
   }
 
   @Override
@@ -75,6 +79,10 @@ public class MainEntrypoint implements QuarkusApplication {
     Log.debugf("REFERENCE URL:         %s", artifact.getReferenceUrl());
     Log.debugf("CATEGORY NAME:         %s", artifact.getCategoryName());
     Log.debugf("CATEGORY DESCRIPTION:  %s", artifact.getCategoryDescription());
+    Log.debugf("RELATIVE INPUT PATH:   %s", artifact.getInputFile());
+    Log.debugf("RELATIVE OUTPUT PATH:  %s", artifact.getOutputFile());
+    Log.debugf("INPUT FILE:            %s", this.appConfig.rootImageDir().resolve(artifact.getInputFile()).toAbsolutePath());
+    Log.debugf("OUTPUT FILE:           %s", this.appConfig.outputDir().resolve(artifact.getOutputFile()).toAbsolutePath());
     Log.debug("-----------------------------------");
   }
 
@@ -106,17 +114,23 @@ public class MainEntrypoint implements QuarkusApplication {
   private void processImageFile(ArtifactToDescribe artifactToDescribe) {
     createOutputDirIfNotExists(artifactToDescribe);
 
-    var outputFileLocation = this.appConfig.outputDir()
+    var outputFile = this.appConfig.outputDir()
         .resolve(artifactToDescribe.category().name())
-        .resolve(artifactToDescribe.imageFile().getFileName().toString())
+        .resolve(FileReader.OUTPUT_FILE_NAME_TEMPLATE.formatted(artifactToDescribe.imageFile().getFileName().toString()))
         .toAbsolutePath();
 
+    Log.debugf("Output file location: %s", outputFile);
+    var memoryId = UUID.randomUUID().toString();
+
     this.fileReader.getImage(artifactToDescribe.imageFile())
-        .map(image -> artifactToDescribe.hasCategoryDescription() ? this.imageDescriber.describeImage(image, artifactToDescribe.category(), outputFileLocation) : this.imageDescriber.describeImage(image, artifactToDescribe.category().name(), outputFileLocation))
+        .map(image ->
+            artifactToDescribe.hasCategoryDescription() ?
+                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, artifactToDescribe.category().description(), outputFile) :
+                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, outputFile)
+        )
         .ifPresentOrElse(
-            System.out::println,
-//            artifactDescription -> this.artifactRepository.saveArtifact(artifactDescription, artifactToDescribe.category()),
-            () -> System.out.println("Couldn't find image file")
+            Log::debug,
+            () -> Log.info("Couldn't find image file")
         );
   }
 }

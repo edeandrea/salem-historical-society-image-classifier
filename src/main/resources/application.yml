@@ -5,17 +5,20 @@ quarkus:
       api-key: "${OPENAI_KEY}"
       chat-model:
         model-name: gpt-4.1
-    mcp:
-      word-document-server:
-        transport-type: stdio
-        command: /opt/homebrew/bin/python3,mcp/docx_mcp.py
+#    mcp:
+#      filesystem:
+#        transport-type: stdio
+#        command: "npx,-y,@modelcontextprotocol/server-filesystem,${app.output-dir}"
+#      word-document-server:
+#        transport-type: stdio
+#        command: /opt/homebrew/bin/uvx,--from,office-word-mcp-server,word_mcp_server
+#        command: npm,-y,exec,@modelcontextprotocol/server-filesystem@0.6.2,playground
+#        command: /opt/homebrew/bin/python3,mcp/docx_mcp.py
 #        url: http://localhost:8765
 #        command: /Users/edeandre/Desktop/temp/Office-Word-MCP-Server/.venv/bin/python,/Users/edeandre/Desktop/temp/Office-Word-MCP-Server/word_mcp_server.py
 #        command: /opt/homebrew/bin/uvx,mcp-server-office
 #        command: npx,-y,@smithery/cli,install,@famano/mcp-server-office,--client,claude
 #        command: /opt/homebrew/bin/uvx,mcp-server-office
-        log-requests: true
-        log-responses: true
   hibernate-orm:
     database:
       generation: drop-and-create
@@ -25,7 +28,9 @@ quarkus:
   quarkus:
     log:
       category:
-        org.salemhist:
+        "org.salemhist":
+          level: DEBUG
+        "dev.langchain4j.mcp":
           level: DEBUG
     langchain4j:
       log-requests: true
