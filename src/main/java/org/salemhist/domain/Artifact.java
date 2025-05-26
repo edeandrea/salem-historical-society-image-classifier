@@ -26,6 +26,15 @@ public class Artifact {
     private String categoryDescription;
     private String inputFile;
     private String outputFile;
+    private String googleDriveLink;
+
+    public String getGoogleDriveLink() {
+        return googleDriveLink;
+    }
+
+    public void setGoogleDriveLink(String googleDriveLink) {
+        this.googleDriveLink = googleDriveLink;
+    }
 
     public Long getId() {
         return id;
@@ -116,6 +125,7 @@ public class Artifact {
                ", categoryDescription='" + referenceUrl + '\'' +
                ", inputFile='" + inputFile + '\'' +
                ", outputFile='" + outputFile + '\'' +
+               ", googleDriveLink='" + googleDriveLink + '\'' +
                '}';
     }
 }

@@ -5,8 +5,12 @@ quarkus:
       api-key: "${OPENAI_KEY}"
       chat-model:
         model-name: gpt-4.1
-#    mcp:
-#      filesystem:
+    mcp:
+      google-drive:
+        transport-type: http
+        url: "https://mcp.pipedream.net/${PIPEDREAM_GDRIVE_TOKEN}/google_drive"
+  #      filesystem:ccccccjtrvvudbkgrgureegnnvggvvuulcukbeljinin
+
 #        transport-type: stdio
 #        command: "npx,-y,@modelcontextprotocol/server-filesystem,${app.output-dir}"
 #      word-document-server:

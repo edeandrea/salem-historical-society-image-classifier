@@ -15,4 +15,7 @@ public interface AppConfig {
 
   @WithDefault("true")
   boolean cleanOutputDirAtStartup();
+
+  @WithDefault("Salem Historical Society/Images")
+  String rootDriveFolder();
 }

@@ -81,6 +81,7 @@ public class MainEntrypoint implements QuarkusApplication {
     Log.debugf("CATEGORY DESCRIPTION:  %s", artifact.getCategoryDescription());
     Log.debugf("RELATIVE INPUT PATH:   %s", artifact.getInputFile());
     Log.debugf("RELATIVE OUTPUT PATH:  %s", artifact.getOutputFile());
+    Log.debugf("GOOGLE DRIVE URL:      %s", artifact.getGoogleDriveLink());
     Log.debugf("INPUT FILE:            %s", this.appConfig.rootImageDir().resolve(artifact.getInputFile()).toAbsolutePath());
     Log.debugf("OUTPUT FILE:           %s", this.appConfig.outputDir().resolve(artifact.getOutputFile()).toAbsolutePath());
     Log.debug("-----------------------------------");
@@ -125,8 +126,8 @@ public class MainEntrypoint implements QuarkusApplication {
     this.fileReader.getImage(artifactToDescribe.imageFile())
         .map(image ->
             artifactToDescribe.hasCategoryDescription() ?
-                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, artifactToDescribe.category().description(), outputFile) :
-                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, outputFile)
+                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, artifactToDescribe.category().description(), outputFile, this.appConfig.rootDriveFolder()) :
+                this.imageDescriber.describeImage(memoryId, image, artifactToDescribe, outputFile, this.appConfig.rootDriveFolder())
         )
         .ifPresentOrElse(
             Log::debug,
