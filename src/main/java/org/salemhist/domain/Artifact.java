@@ -28,6 +28,10 @@ public class Artifact {
     private String outputFile;
     private String googleDriveLink;
 
+    public String getOutputFileName() {
+        return this.outputFile.substring(this.outputFile.lastIndexOf("/") + 1);
+    }
+
     public String getGoogleDriveLink() {
         return googleDriveLink;
     }

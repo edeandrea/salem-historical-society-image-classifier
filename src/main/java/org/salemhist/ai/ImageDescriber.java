@@ -62,7 +62,7 @@ import io.quarkiverse.langchain4j.guardrails.OutputGuardrails;
       - If applicable, the reference URL. Please ensure the reference URL is a clickable hyperlink.
 
       Once the Microsoft Word document has been created, perform the following steps. Please don't ask for confirmation before performing any of the steps. Just do it.
-      1) Upload each Microsoft Word docx document to Google Drive inside the root folder "{gdriveRoot}" and add a sharing permission.
+      1) Upload the Microsoft Word docx document "{fileToSave}" to Google Drive inside the root folder "{gdriveRoot}".
       2) Add a sharing permission granting world read access.
       3) Save the artifact details into the database
 

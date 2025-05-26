@@ -1,9 +1,10 @@
 package org.salemhist.ai;
 
+import java.nio.file.Path;
+
 import jakarta.enterprise.context.ApplicationScoped;
 
 import org.salemhist.domain.Artifact;
-import org.salemhist.domain.ArtifactToDescribe;
 
 import dev.langchain4j.agent.tool.Tool;
 import dev.langchain4j.agent.tool.ToolMemoryId;
@@ -27,13 +28,13 @@ public interface GoogleDriveUploader {
       Please perform the following operations:
       
       1) Create the folder "{gdriveRoot}/{artifact.categoryName}" (and any parent folders) if it does not exist.
-      2) Upload "{artifactToDescribe.imageFile}" to Google Drive as "{gdriveRoot}/{artifact.categoryName}/{artifact.inputFile}".
+      2) Upload "{fileToUpload}" to Google Drive as "{gdriveRoot}/{artifact.categoryName}/{artifact.getOutputFileName()}".
       3) Add a sharing permission of type "anyone" to the sharing preferences of the file and provide a sharing URL.
       """)
   @McpToolBox("google-drive")
   @Tool("Uploads a document to Google Drive and adds a sharing permission")
   @OutputGuardrails(GoogleDriveUploadResultOutputJsonGuardrail.class)
-  GoogleDriveUploadResult uploadToGoogleDriveAndAddSharingPermission(@ToolMemoryId @MemoryId Object memoryId, String gdriveRoot, Artifact artifact, ArtifactToDescribe artifactToDescribe);
+  GoogleDriveUploadResult uploadToGoogleDriveAndAddSharingPermission(@ToolMemoryId @MemoryId Object memoryId, String gdriveRoot, Artifact artifact, Path fileToUpload);
 
   record GoogleDriveUploadResult(@Description("The sharing URL for the file") String sharingURL) {}
 }
