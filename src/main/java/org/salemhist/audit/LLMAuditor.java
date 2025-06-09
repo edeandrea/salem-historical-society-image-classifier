@@ -1,4 +1,4 @@
-package org.salemhist.service;
+package org.salemhist.audit;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
