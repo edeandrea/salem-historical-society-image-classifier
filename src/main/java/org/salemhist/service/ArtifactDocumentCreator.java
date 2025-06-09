@@ -63,6 +63,7 @@ public class ArtifactDocumentCreator {
     catch (IOException e) {
       // Handle exceptions appropriately
       this.errorEventPublisher.fire(new ErrorEvent("Error creating word document for image %s".formatted(imageSource), e));
+      return "Error creating word document for image %s: %s".formatted(imageSource, e.getMessage());
     }
 
     return "Document successfully created and saved as %s".formatted(outputFile);
