@@ -24,8 +24,10 @@ quarkus:
 #        command: npx,-y,@smithery/cli,install,@famano/mcp-server-office,--client,claude
 #        command: /opt/homebrew/bin/uvx,mcp-server-office
   hibernate-orm:
-    database:
-      generation: drop-and-create
+    schema-management:
+      schema-management:
+        strategy: drop-and-create
+
     physical-naming-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
 
 "%dev":

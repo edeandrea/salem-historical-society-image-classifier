@@ -6,7 +6,9 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
+		<assertj.version>3.27.3</assertj.version>
 		<compiler-plugin.version>3.14.0</compiler-plugin.version>
+		<mapstruct.version>1.6.3</mapstruct.version>
 		<maven.compiler.release>21</maven.compiler.release>
 		<quarkus.poi.version>2.1.2</quarkus.poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,7 +19,6 @@
 		<quarkus.platform.version>3.23.2</quarkus.platform.version>
 		<surefire-plugin.version>3.5.3</surefire-plugin.version>
 	</properties>
-
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -36,7 +37,6 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
 	<dependencies>
 		<dependency>
 			<groupId>io.quarkus</groupId>
@@ -68,12 +68,22 @@
 			<version>${quarkus.poi.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${mapstruct.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-junit5</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>${assertj.version}</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -97,40 +107,82 @@
 				<version>${compiler-plugin.version}</version>
 				<configuration>
 					<parameters>true</parameters>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.mapstruct</groupId>
+							<artifactId>mapstruct-processor</artifactId>
+							<version>${mapstruct.version}</version>
+						</path>
+					</annotationProcessorPaths>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${surefire-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>me.fabriciorby</groupId>
+						<artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+						<version>1.4.0</version>
+					</dependency>
+				</dependencies>
 				<configuration>
 					<systemPropertyVariables>
 						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
 						<maven.home>${maven.home}</maven.home>
 					</systemPropertyVariables>
+					<reportFormat>plain</reportFormat>
+					<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+						<printStacktraceOnError>true</printStacktraceOnError>
+						<printStacktraceOnFailure>true</printStacktraceOnFailure>
+						<printStdoutOnError>true</printStdoutOnError>
+						<printStdoutOnFailure>true</printStdoutOnFailure>
+						<printStdoutOnSuccess>false</printStdoutOnSuccess>
+						<printStderrOnError>true</printStderrOnError>
+						<printStderrOnFailure>true</printStderrOnFailure>
+						<printStderrOnSuccess>false</printStderrOnSuccess>
+					</statelessTestsetInfoReporter>
 				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>${surefire-plugin.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>me.fabriciorby</groupId>
+						<artifactId>maven-surefire-junit5-tree-reporter</artifactId>
+						<version>1.4.0</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<goals>
 							<goal>integration-test</goal>
 							<goal>verify</goal>
 						</goals>
+						<configuration>
+							<systemPropertyVariables>
+								<native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
+								<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+								<maven.home>${maven.home}</maven.home>
+							</systemPropertyVariables>
+							<reportFormat>plain</reportFormat>
+							<statelessTestsetInfoReporter implementation="org.apache.maven.plugin.surefire.extensions.junit5.JUnit5StatelessTestsetInfoTreeReporter">
+								<printStacktraceOnError>true</printStacktraceOnError>
+								<printStacktraceOnFailure>true</printStacktraceOnFailure>
+								<printStdoutOnError>true</printStdoutOnError>
+								<printStdoutOnFailure>true</printStdoutOnFailure>
+								<printStdoutOnSuccess>false</printStdoutOnSuccess>
+								<printStderrOnError>true</printStderrOnError>
+								<printStderrOnFailure>true</printStderrOnFailure>
+								<printStderrOnSuccess>false</printStderrOnSuccess>
+							</statelessTestsetInfoReporter>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<systemPropertyVariables>
-						<native.image.path>${project.build.directory}/${project.build.finalName}-runner</native.image.path>
-						<java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
-						<maven.home>${maven.home}</maven.home>
-					</systemPropertyVariables>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
 		<profile>
 			<id>native</id>
