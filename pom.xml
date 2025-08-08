@@ -6,7 +6,7 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
-		<assertj.version>3.27.3</assertj.version>
+		<assertj.version>3.27.4</assertj.version>
 		<compiler-plugin.version>3.14.0</compiler-plugin.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<maven.compiler.release>21</maven.compiler.release>
