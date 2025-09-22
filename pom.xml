@@ -7,7 +7,7 @@
 
 	<properties>
 		<assertj.version>3.27.5</assertj.version>
-		<compiler-plugin.version>3.14.0</compiler-plugin.version>
+		<compiler-plugin.version>3.14.1</compiler-plugin.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<maven.compiler.release>21</maven.compiler.release>
 		<quarkus.poi.version>2.1.2</quarkus.poi.version>
