@@ -10,7 +10,7 @@
 		<compiler-plugin.version>3.14.1</compiler-plugin.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 		<maven.compiler.release>21</maven.compiler.release>
-		<quarkus.poi.version>2.1.2</quarkus.poi.version>
+		<quarkus.poi.version>2.1.4</quarkus.poi.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<quarkus.langchain4j.version>1.1.4</quarkus.langchain4j.version>
