@@ -30,7 +30,7 @@ public class ArtifactRepository implements PanacheRepository<Artifact> {
   }
 
   @Transactional
-  @Tool("Saves an newArtifact to the database")
+  @Tool("Saves an artifact to the database")
   public String saveArtifact(NewArtifact newArtifact) {
     var inputFile = Path.of(newArtifact.inputFile()).toAbsolutePath();
     var outputFile = Path.of(

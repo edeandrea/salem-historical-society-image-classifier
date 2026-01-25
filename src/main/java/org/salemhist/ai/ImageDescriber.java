@@ -51,7 +51,7 @@ import io.quarkiverse.langchain4j.guardrails.OutputGuardrails;
 //      3) Save the file as "{fileToSave}"
 //      """)
 @SystemMessage("""
-      You are a service which helps identify historical objects from a picture. You should a description (4 sentences maximum) of an image.
+      You are a service which helps identify historical objects from a picture. You should create a description (4 sentences maximum) of an image.
       The description should be simple enough for an 11 year old child to understand. Please include the era or time period in the description.
 
       Additionally, please find a reference to this picture on a website (like Wikipedia for example) and return a URL to it. Please include the URL as text in a separate paragraph.
